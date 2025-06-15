@@ -27,7 +27,11 @@ public class Topic {
         }
     }
 
-    public void publishMessage(String message){
+    public void publishMessage(String message, Publisher publisher) {
+        if(!publishers.contains(publisher)){
+            System.out.println("Publisher " + publisher.getPublisherName() + " is not authorized to publish to topic " + topicName);
+            return;
+        }
         AppExecutor.getExecutorService().submit(() ->{
             Message newMessage = new Message(message, offset.getAndIncrement());
             messages.add(newMessage);
@@ -36,9 +40,6 @@ public class Topic {
         });
     }
 
-    public boolean isValidPublisher(Publisher publisher) {
-        return publishers.contains(publisher);
-    }
 
     public String getTopicName(){
         return this.topicName;

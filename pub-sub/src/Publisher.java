@@ -8,11 +8,7 @@ public class Publisher {
         this.publisherName = name;
     }
     public void publishMessage(String message, Topic topic){
-        if(topic.isValidPublisher(this)) {
-            topic.publishMessage(message);
-        } else {
-            System.out.println("Publisher " + publisherName + " is not valid for topic " + topic.getTopicName());
-        }
+        topic.publishMessage(message, this);
     }
 
     public String getPublisherName() {
