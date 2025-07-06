@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/concert-management/concert-management.iml" filepath="$PROJECT_DIR$/concert-management/concert-management.iml" />
       <module fileurl="file://$PROJECT_DIR$/cricinfo/cricinfo.iml" filepath="$PROJECT_DIR$/cricinfo/cricinfo.iml" />
       <module fileurl="file://$PROJECT_DIR$/pub-sub/pub-sub.iml" filepath="$PROJECT_DIR$/pub-sub/pub-sub.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rate-limiter/rate-limiter.iml" filepath="$PROJECT_DIR$/rate-limiter/rate-limiter.iml" />
     </modules>
   </component>
 </project>
