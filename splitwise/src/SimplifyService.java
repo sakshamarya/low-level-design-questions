@@ -16,16 +16,26 @@ public class SimplifyService {
             }
         }
 
-        List<Map.Entry<User, Integer>> userPaidList = usersPaid.entrySet().stream().collect(Collectors.toList());
-        List<Map.Entry<User, Integer>> userOwesList = userOwes.entrySet().stream().collect(Collectors.toList());
+        List<Map.Entry<User, Integer>> userPaidList = usersPaid.entrySet().stream().filter(entry -> {
+            return entry.getValue()>0;
+        }).collect(Collectors.toList());
+        List<Map.Entry<User, Integer>> userOwesList = userOwes.entrySet().stream().filter(entry -> {
+            return entry.getValue()>0;
+        }).collect(Collectors.toList());
+
 
         int i=0, j=0;
+        int flag=0;
 
         while(i<userOwesList.size()){
             while(j<userPaidList.size() && userPaidList.get(i).getValue()>0){
                 int mini = Math.min(userOwesList.get(i).getValue(), userPaidList.get(j).getValue());
                 userOwesList.get(i).setValue(userOwesList.get(i).getValue() - mini);
                 userPaidList.get(j).setValue(userPaidList.get(j).getValue() - mini);
+
+                if(mini > 0){
+                    flag=1;
+                }
 
                 if(userPaidList.get(j).getValue() == 0){
                     System.out.println(userOwesList.get(i).getKey().getUserName() + " needs to pay " + userPaidList.get(j).getKey().getUserName() + " Rs" + mini);
@@ -40,6 +50,10 @@ public class SimplifyService {
                 }
             }
             i++;
+        }
+
+        if(flag==0){
+            System.out.println("All Settled");
         }
     }
 }

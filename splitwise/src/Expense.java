@@ -25,7 +25,7 @@ public class Expense {
                    HashMap<User, Integer> usersOwe,
                    ExpenseDistributionMethod expenseDistributionMethod) {
 
-        if(getAmountFromHashmap(usersPaid) != amount && getAmountFromHashmap(usersPaid)!=getAmountFromHashmap(usersOwe)) {
+        if(expenseDistributionMethod.equals(ExpenseDistributionMethod.BY_AMOUNT) && getAmountFromHashmap(usersPaid) != amount && getAmountFromHashmap(usersPaid)!=getAmountFromHashmap(usersOwe)) {
             System.out.println("Cannot create expense: Total amount paid by users does not match the expense amount.");
             return;
         }

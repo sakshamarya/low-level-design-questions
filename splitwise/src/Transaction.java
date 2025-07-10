@@ -13,6 +13,10 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public AtomicLong getTransactionId(){
+        return transactionId;
+    }
+
     public User getFromUser() {
         return fromUser;
     }

@@ -3,6 +3,7 @@ import javafx.util.Pair;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -15,15 +16,15 @@ public class Group {
     private boolean isSimplifiedPaymentsOn = false;
     private SimplifyService simplifyService = new SimplifyService();
 
-    public Group(String groupName, List<User> groupMembers, List<Expense> expenses, List<Transaction> transactions) {
+    public Group(String groupName, List<User> groupMembers) {
         this.groupId = new AtomicLong(groupId.incrementAndGet());
         this.groupName = groupName;
         this.groupMembers = groupMembers;
-        this.expenses = expenses;
-        this.transactions = transactions;
+        this.expenses = new CopyOnWriteArrayList<>();
+        this.transactions = new CopyOnWriteArrayList<>();
     }
 
-    private void printPayments(){
+    public void printPayments(){
         /*
         * Build a map having A -> (B, 10), (c, 20) :: This denotes A needs to give Rs 10 to B and Rs 20 to C
         * */
@@ -115,7 +116,7 @@ public class Group {
         return totalExpenseMap;
     }
 
-    private void printSimplifiedTotalExpenseMap() {
+    public void printSimplifiedTotalExpenseMap() {
         simplifyService.printSimplifiedMap(getTotalExpenseMap());
     }
 
