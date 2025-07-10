@@ -23,7 +23,7 @@ public class Group {
         this.transactions = transactions;
     }
 
-    public void printPayments(){
+    private void printPayments(){
         /*
         * Build a map having A -> (B, 10), (c, 20) :: This denotes A needs to give Rs 10 to B and Rs 20 to C
         * */
@@ -115,7 +115,47 @@ public class Group {
         return totalExpenseMap;
     }
 
-    private HashMap<User, Integer> getSimplifiedTotalExpenseMap() {
-        return simplifyService.getSimplifiedMap(getTotalExpenseMap());
+    private void printSimplifiedTotalExpenseMap() {
+        simplifyService.printSimplifiedMap(getTotalExpenseMap());
     }
+
+    public void setSimplifiedPaymentsOn(boolean simplifiedPaymentsOn) {
+        isSimplifiedPaymentsOn = simplifiedPaymentsOn;
+    }
+
+    public void printAllPayments(){
+        if(isSimplifiedPaymentsOn) {
+            printSimplifiedTotalExpenseMap();
+        } else {
+            printPayments();
+        }
+    }
+
+    public void addUserToGroup(User user) {
+        if (!groupMembers.contains(user)) {
+            groupMembers.add(user);
+            System.out.println("User " + user.getUserName() + " added to the group " + groupName + ".");
+        } else {
+            System.out.println("User already exists in the group.");
+        }
+    }
+
+    public void addTransaction(Transaction transaction) {
+        if (transaction != null && groupMembers.contains(transaction.getFromUser()) && groupMembers.contains(transaction.getToUser())) {
+            transactions.add(transaction);
+            System.out.println("Transaction added: " + transaction.getFromUser().getUserName() + " pays " + transaction.getAmount() + " to " + transaction.getToUser().getUserName());
+        } else {
+            System.out.println("Invalid transaction or users not in the group.");
+        }
+    }
+
+    public void addExpense(Expense expense) {
+        if (expense != null && groupMembers.containsAll(expense.getUsersPaid().keySet()) && groupMembers.containsAll(expense.getUsersOwe().keySet())) {
+            expenses.add(expense);
+            System.out.println("Expense added: " + expense.getExpenseName() + " of amount " + expense.getAmount());
+        } else {
+            System.out.println("Invalid expense or users not in the group.");
+        }
+    }
+
 }
