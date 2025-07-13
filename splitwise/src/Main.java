@@ -26,9 +26,9 @@ public class Main {
         group1.printPayments();
         group1.printSimplifiedTotalExpenseMap();
         group1.addExpense(new Expense("Dominos", 1000, expense1Paid, expense1Owe, ExpenseDistributionMethod.BY_AMOUNT));
-        group1.addTransaction(app.createTransaction(saksham, saksham2, 100));
-        group1.addTransaction(app.createTransaction(saksham2, saksham1, 100));
-        group1.addTransaction(app.createTransaction(saksham1, saksham, 100));
+//        group1.addTransaction(app.createTransaction(saksham, saksham2, 100));
+//        group1.addTransaction(app.createTransaction(saksham2, saksham1, 100));
+//        group1.addTransaction(app.createTransaction(saksham1, saksham, 100));
         group1.printPayments();
         group1.printSimplifiedTotalExpenseMap();
     }

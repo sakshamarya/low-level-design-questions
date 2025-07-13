@@ -10,46 +10,42 @@ public class SimplifyService {
 
         for(Map.Entry<User, Integer> entry: expenseMap.entrySet()){
             if(entry.getValue() < 0){
-                usersPaid.put(entry.getKey(), entry.getValue());
+                usersPaid.put(entry.getKey(), Math.abs(entry.getValue()));
             } else if(entry.getValue() > 0){
-                userOwes.put(entry.getKey(), -entry.getValue());
+                userOwes.put(entry.getKey(), entry.getValue());
             }
         }
 
-        List<Map.Entry<User, Integer>> userPaidList = usersPaid.entrySet().stream().filter(entry -> {
-            return entry.getValue()>0;
-        }).collect(Collectors.toList());
-        List<Map.Entry<User, Integer>> userOwesList = userOwes.entrySet().stream().filter(entry -> {
-            return entry.getValue()>0;
-        }).collect(Collectors.toList());
+        List<Map.Entry<User, Integer>> userPaidList = usersPaid.entrySet().stream().collect(Collectors.toList());
+        List<Map.Entry<User, Integer>> userOwesList = userOwes.entrySet().stream().collect(Collectors.toList());
 
 
         int i=0, j=0;
         int flag=0;
 
-        while(i<userOwesList.size()){
-            while(j<userPaidList.size() && userPaidList.get(i).getValue()>0){
-                int mini = Math.min(userOwesList.get(i).getValue(), userPaidList.get(j).getValue());
-                userOwesList.get(i).setValue(userOwesList.get(i).getValue() - mini);
-                userPaidList.get(j).setValue(userPaidList.get(j).getValue() - mini);
+        while(i<userPaidList.size()){
+            int currSum=0;
 
-                if(mini > 0){
+            while(j<userOwesList.size()){
+                int toPay = Math.min(userPaidList.get(i).getValue(), userOwesList.get(j).getValue());
+                userPaidList.get(i).setValue(userPaidList.get(i).getValue()-toPay);
+                userOwesList.get(j).setValue(userOwesList.get(j).getValue()-toPay);
+                if(toPay > 0){
                     flag=1;
+                    System.out.println(userOwesList.get(j).getKey().getUserName() + " needs to pay Rs: " + toPay + " to " + userPaidList.get(i).getKey().getUserName());
                 }
 
-                if(userPaidList.get(j).getValue() == 0){
-                    System.out.println(userOwesList.get(i).getKey().getUserName() + " needs to pay " + userPaidList.get(j).getKey().getUserName() + " Rs" + mini);
+                if(userOwesList.get(j).getValue() == 0){
                     j++;
-
-                    if(userOwesList.get(i).getValue() == 0){
-                        break;
-                    }
                 }
-                else if(userOwesList.get(i).getValue() == 0){
+                else{
                     break;
                 }
             }
-            i++;
+
+            if(userPaidList.get(i).getValue() == 0){
+                i++;
+            }
         }
 
         if(flag==0){

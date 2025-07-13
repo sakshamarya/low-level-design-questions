@@ -47,11 +47,11 @@ public class Expense {
     }
 
     public HashMap<User, Integer> getUsersPaid() {
-        return usersPaid;
+        return new HashMap<>(this.usersPaid);
     }
 
     public HashMap<User, Integer> getUsersOwe() {
-        return usersOwe;
+        return new HashMap<>(this.usersOwe);
     }
 
     public ExpenseDistributionMethod getExpenseDistributionMethod() {

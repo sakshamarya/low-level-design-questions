@@ -29,62 +29,44 @@ public class Group {
         * Build a map having A -> (B, 10), (c, 20) :: This denotes A needs to give Rs 10 to B and Rs 20 to C
         * */
 
-        HashMap<User, HashMap<User, Integer>> paymentMap = new HashMap<>();
+        HashMap<String, Integer> paymentMap = new HashMap<>();
+
         for(Expense expense: expenses){
-            int i=0, j=0;
+            List<Map.Entry<User, Integer>> userPaid = expense.getUsersPaid().entrySet().stream().collect(Collectors.toList());
+            List<Map.Entry<User, Integer>> userOwe = SplitFactory.getSplitService(expense.getExpenseDistributionMethod()).getSplitAmounts(expense).entrySet().stream().collect(Collectors.toList());
 
-            List<Map.Entry<User, Integer>> usersOweList = expense.getUsersOwe().entrySet().stream().collect(Collectors.toList());
-            List<Map.Entry<User, Integer>> usersPaidList = expense.getUsersPaid().entrySet().stream().collect(Collectors.toList());
-
-            while(i<usersPaidList.size()){
-                while(j<usersOweList.size() && usersPaidList.get(i).getValue() > 0){
-                    int mini = Math.min(usersPaidList.get(i).getValue(), usersOweList.get(j).getValue());
-
-                    if(paymentMap.containsKey(usersOweList.get(j).getKey())){
-                        paymentMap.get(usersOweList.get(j).getKey()).put(usersPaidList.get(i).getKey(), paymentMap.get(usersOweList.get(j).getKey()).getOrDefault(usersPaidList.get(i).getKey(), 0) + mini);
-                    }
-                    else{
-                        paymentMap.put(usersOweList.get(j).getKey(), new HashMap<>());
-                        paymentMap.get(usersOweList.get(j).getKey()).put(usersPaidList.get(i).getKey(), mini);
-                    }
-
-                    usersPaidList.get(i).setValue(usersPaidList.get(i).getValue() - mini);
-                    usersOweList.get(j).setValue(usersOweList.get(j).getValue() - mini);
-
-                    if(usersOweList.get(j).getValue() == 0){
-                        j++;
+            for(int i=0;i<userPaid.size();i++){
+                for(int j=0;j<userOwe.size();j++){
+                    int p = userPaid.get(i).getValue();
+                    int o = userOwe.get(j).getValue();
+                    UserPair userPair = new UserPair(userOwe.get(j).getKey(), userPaid.get(i).getKey());
+                    if(userPaid.get(i).getKey()!=userOwe.get(j).getKey()){
+                        int mini = Math.min(p, o);
+                        userOwe.get(j).setValue(o-mini);
+                        paymentMap.put(userPair.toString(), paymentMap.getOrDefault(userPair.toString(), 0)+mini);
                     }
                 }
-                i++;
             }
+
         }
 
         for(Transaction transaction: transactions){
-            User fromUser = transaction.getFromUser();
-            User toUser = transaction.getToUser();
-            int amount = transaction.getAmount();
+            UserPair userPair = new UserPair(transaction.getFromUser(), transaction.getToUser());
 
-            if(paymentMap.containsKey(fromUser) && paymentMap.get(fromUser).containsKey(toUser)) {
-                paymentMap.get(fromUser).put(toUser, paymentMap.get(fromUser).get(toUser) - amount);
-            } else {
-                if(!paymentMap.containsKey(toUser)){
-                    paymentMap.put(toUser, new HashMap<>());
-                }
+            paymentMap.put(userPair.toString(), paymentMap.getOrDefault(userPair.toString(), 0) - transaction.getAmount());
 
-                paymentMap.get(toUser).put(fromUser, amount+paymentMap.get(toUser).getOrDefault(fromUser, 0));
+            if(paymentMap.get(userPair.toString()) < 0){
+                UserPair userPair1 = new UserPair(transaction.getToUser(), transaction.getFromUser());
+                paymentMap.put(userPair1.toString(), paymentMap.getOrDefault(userPair1.toString(), 0)+Math.abs(paymentMap.get(userPair.toString())));
+                paymentMap.remove(userPair.toString());
             }
         }
 
-        for(Map.Entry<User, HashMap<User, Integer>> entry: paymentMap.entrySet()){
-            User payer = entry.getKey();
-            HashMap<User, Integer> receiverMap = entry.getValue();
-            for(Map.Entry<User, Integer> receiverEntry: receiverMap.entrySet()){
-                User receiver = receiverEntry.getKey();
-                int amount = receiverEntry.getValue();
-                if(amount > 0) {
-                    System.out.println(payer.getUserName() + " needs to pay " + amount + " to " + receiver.getUserName());
-                }
+        for(Map.Entry<String, Integer> entry: paymentMap.entrySet()){
+            if(entry.getValue() > 0){
+                System.out.println(entry.getKey() + " -> " + entry.getValue());
             }
+
         }
 
     }
